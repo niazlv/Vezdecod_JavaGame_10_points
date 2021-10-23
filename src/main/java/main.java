@@ -28,12 +28,16 @@ public class main extends Window {
         super.onKeyButton(key, scancode, action, mods);
         if (action == GLFW.GLFW_RELEASE) {
             switch (key) {
+                //увеличить n можно при помощи клавиш Page UP, UP, +
                 case GLFW.GLFW_KEY_UP:
                 case GLFW.GLFW_KEY_PAGE_UP:
+                case GLFW.GLFW_KEY_EQUAL:
                 case GLFW.GLFW_KEY_KP_ADD:
                     n++;
                     break;
+                //уменьшить n можно при помощи клавиш Page DOWN, DOWN, -
                 case GLFW.GLFW_KEY_PAGE_DOWN:
+                case GLFW.GLFW_KEY_KP_SUBTRACT:
                 case GLFW.GLFW_KEY_DOWN:
                 case GLFW.GLFW_KEY_MINUS:
                     if(n>3)
