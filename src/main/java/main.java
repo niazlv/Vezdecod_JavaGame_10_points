@@ -23,6 +23,14 @@ public class main extends Window {
     int thickness = 3;
 
     @Override
+    protected void onScroll(double dx, double dy) {
+        if(dy<0 && n>3)
+            n += dy;
+        else if (dy>0)
+            n += dy;
+    }
+
+    @Override
     protected void onFrame(double elapsed) {
         //рисуем фон
         canvas.drawTexture(background, 0, 0, width, height);
@@ -35,13 +43,14 @@ public class main extends Window {
 
         lastx = (width / 2) + (int)(Math.sin(0) * radius);
         lasty = (height / 2) + (int)(Math.cos(0) * radius);
-        for(double i = 0; i <= (Math.PI * 2); i+=((Math.PI * 2) / n)) {
+        for(double i = 0; i < (Math.PI * 2); i+=((Math.PI * 2) / n)) {
             x = (width / 2) + (int)(Math.sin(i) * radius);
             y = (height / 2) + (int)(Math.cos(i) * radius);
             canvas.drawLine(10, lastx, lasty, x, y, thickness);
             lastx = x;
             lasty = y;
         }
+        canvas.drawLine(10, lastx, lasty, (width / 2) + (int)(Math.sin(0) * radius), (height / 2) + (int)(Math.cos(0) * radius), thickness);
     }
 
     public static void main(String[] args) {
