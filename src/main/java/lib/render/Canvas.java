@@ -30,7 +30,7 @@ public class Canvas {
     }
 
     public void fillCircle(int color, double x, double y, double radius) {
-        fillCircleSegment(color, x, y, radius, 0, 2 * Math.PI);
+        fillCircleSegment(color, x, y, radius, 0, 2 * Math.PI+1);
     }
 
     public void drawCircle(int color, double x, double y, double radius, double thickness) {
