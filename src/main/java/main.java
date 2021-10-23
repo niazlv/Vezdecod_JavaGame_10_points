@@ -14,12 +14,13 @@ public class main extends Window {
     private final Texture background = Texture.load("background.png");
 
     public main() {
-        super(800, 600, "Game in java (40 points)", true, "Cambria Math", 46);
+        super(800, 600, "Game in java (50 points)", true, "Cambria Math", 46);
     }
     //размер многоугольника(радиус от центра)
     int radius = 200;
     //толщина стенок многоугольника
     int thickness = 2;
+    int color= 0x00ff00;
 
     @Override
     protected void onKeyButton(int key, int scancode, int action, int mods) {
@@ -38,7 +39,7 @@ public class main extends Window {
                 case GLFW.GLFW_KEY_KP_SUBTRACT:
                 case GLFW.GLFW_KEY_DOWN:
                 case GLFW.GLFW_KEY_MINUS:
-                    if(radius > 0)
+                    if(radius > 5)
                         radius-=5;
                     break;
 
@@ -48,16 +49,50 @@ public class main extends Window {
 
     @Override
     protected void onScroll(double dx, double dy) {
-        if(dy<0 && radius>0)
+        if(dy<0 && radius>5)
             radius += dy*5;
         else if (dy>0)
             radius += dy*5;
     }
 
     @Override
+    protected void onMouseButton(int button, int action, int mods) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_1 && action == GLFW.GLFW_RELEASE) {
+            //слегка разные круги, интересно наблюдать
+            //balls.add(new Ball(cursorX, cursorY, (int) Math.abs(Math.random() * 0xffffff), radius, Math.random() * 0.5 + 0.01f, Math.random() * 200 + 50));
+
+            //Либо, если требуется ПОЛНАЯ копия, то:
+            balls.add(new Ball(cursorX, cursorY, (int) color, radius));
+        }
+    }
+    List<Ball> balls = new ArrayList<>();
+    @Override
     protected void onFrame(double elapsed) {
         //рисуем фон
         canvas.drawTexture(background, 0, 0, width, height);
+        for (Ball ball : balls) {
+            ball.tick(elapsed);
+        }
+
+        //Моя отрисовка кругов
+        for (Ball ball : balls)
+            canvas.fillCircle(ball.color,(int)ball.x,(int)ball.y,ball.radius);
+
+        //отрисовка из примера FreeBalls
+        /*
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        canvas.draw(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR, buffer -> {
+                    for (Ball ball : balls) {
+                        double step = Math.PI / 360;
+                        for (double angle = 0; angle <= 2 * Math.PI; angle += step) {
+                            buffer.pos(ball.x, ball.y, 0).color(ball.color).endVertex();
+                            buffer.pos(ball.radiusX(canvas, angle), ball.radiusY(canvas, angle), 0).color(ball.color).endVertex();
+                            buffer.pos(ball.radiusX(canvas, angle + step), ball.radiusY(canvas, angle + step), 0).color(ball.color).endVertex();
+                        }
+                    }
+                });
+         */
+
 
 
         /*
@@ -82,11 +117,14 @@ public class main extends Window {
         * ЕСЛИ она не пересекается с другой окружностью,
         * ИНАЧЕ — другим.
         */
-        //Красим круг в крассный, если она пересекается с окружностью, иначе красим её в зеленый
-        if(isCross(width/2,height/2,radius,(int)cursorX,(int)cursorY,radius))
-            canvas.fillCircle(0xff0000,cursorX,cursorY,radius);
-        else
-            canvas.fillCircle(0x00ff00,cursorX,cursorY,radius);
+        color = 0x00ff00;
+        for (Ball ball : balls) {
+            if (isCross((int)ball.x, (int)ball.y, ball.radius, (int) cursorX, (int) cursorY, radius))
+                color = 0xff0000;
+        }
+        if (isCross(width/2, height/2, radius, (int) cursorX, (int) cursorY, radius))
+            color = 0xff0000;
+        canvas.fillCircle(color, cursorX, cursorY, radius);
     }
 
     private void drawCircle(int xc,int yc, int radius, int color){
@@ -127,6 +165,57 @@ public class main extends Window {
         else
             return (false);
     }
+
+    class Ball {
+        double speedX, speedY;
+        double x;
+        double y;
+        final int color;
+        final int radius;
+        double loss;
+        double time;
+
+        public Ball(double x, double y, int color, int radius, double loss, double time) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.radius = radius;
+            this.loss = loss;
+            this.time = time;
+        }
+        public Ball(double x, double y, int color, int radius){
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.radius = radius;
+            this.loss = 0.25f;
+            this.time = 200;
+        }
+
+        public void tick(double elapsed) {
+            double g = 9.8 * time;
+            speedY += g * elapsed;
+            y += speedY * elapsed;
+
+            if (x < radius) {
+                speedX *= -1;
+                x = radius;
+            }
+            if (x > width - radius) {
+                speedX *= -1;
+                x = width - radius;
+            }
+            if (y < radius) {
+                y = radius;
+                speedY *= -(1.0 - loss);
+            }
+            if (y > height - radius) {
+                y = height - radius;
+                speedY *= -(1.0 - loss);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         new main().show();
     }
