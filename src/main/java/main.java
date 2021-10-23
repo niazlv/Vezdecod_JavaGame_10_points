@@ -22,6 +22,28 @@ public class main extends Window {
     //толщина стенок многоугольника
     int thickness = 3;
 
+
+    @Override
+    protected void onKeyButton(int key, int scancode, int action, int mods) {
+        super.onKeyButton(key, scancode, action, mods);
+        if (action == GLFW.GLFW_RELEASE) {
+            switch (key) {
+                case GLFW.GLFW_KEY_UP:
+                case GLFW.GLFW_KEY_PAGE_UP:
+                case GLFW.GLFW_KEY_KP_ADD:
+                    n++;
+                    break;
+                case GLFW.GLFW_KEY_PAGE_DOWN:
+                case GLFW.GLFW_KEY_DOWN:
+                case GLFW.GLFW_KEY_MINUS:
+                    if(n>3)
+                        n--;
+                    break;
+
+            }
+        }
+    }
+
     @Override
     protected void onScroll(double dx, double dy) {
         if(dy<0 && n>3)
