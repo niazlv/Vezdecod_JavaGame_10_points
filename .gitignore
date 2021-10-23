@@ -1,0 +1,10 @@
+target/
+.idea/
+*.iml
+src/main/java/FreeFall.java
+src/main/java/Graphs.java
+src/main/java/Gravity.java
+src/main/java/Molecules.java
+src/main/java/Pendulum.java
+src/main/java/Pi.java
+src/main/java/UnitCircle.java
